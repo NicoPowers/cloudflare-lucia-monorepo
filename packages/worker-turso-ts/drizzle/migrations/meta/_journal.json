@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709184573005,
+      "tag": "0000_sparkling_peter_parker",
+      "breakpoints": true
+    }
+  ]
+}

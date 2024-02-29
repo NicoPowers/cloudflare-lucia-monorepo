@@ -1,25 +1,12 @@
-name = "test-api"
+name = "worker-turso-ts"
 main = "src/index.ts"
 compatibility_date = "2024-02-23"
-
-# [[d1_databases]]
-# binding = "DB" # i.e. available in your Worker on env.DB
-# database_name = "test-db"
-# database_id = "c2e7843f-890e-4ab5-8b6f-0bc3b08d3a73"
-
-# name = "YOUR PROJECT NAME"
-# main = "src/index.ts"
-# compatibility_date = "2022-11-07"
-# node_compat = true
-# [[ d1_databases ]]
-# binding = "DB"
-# database_name = "YOUR DB NAME"
-# database_id = "YOUR DB ID"
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
 # Docs: https://developers.cloudflare.com/workers/platform/environment-variables
-# [vars]
+[vars]
+LIBSQL_DB_URL = "libsql://my-db-nicopowers.turso.io"
 # MY_VARIABLE = "production_value"
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
