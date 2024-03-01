@@ -18,7 +18,11 @@
   },
   "dependencies": {
     "@libsql/client": "^0.5.2",
+    "@lucia-auth/adapter-drizzle": "^1.0.2",
+    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.29.4",
-    "itty-router": "^3.0.12"
+    "itty-router": "^3.0.12",
+    "lucia": "^3.0.1",
+    "oslo": "^1.1.3"
   }
 }

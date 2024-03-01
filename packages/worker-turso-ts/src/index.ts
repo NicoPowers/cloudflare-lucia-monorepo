@@ -1,8 +1,11 @@
 import { Client as LibsqlClient, createClient } from "@libsql/client/web";
-import { Router, RouterType } from "itty-router";
-import { countries } from "@drizzle/schema";
+import { IRequest, Router, RouterType } from "itty-router";
+import { countries, userTable } from "@drizzle/schema";
 import { drizzle } from 'drizzle-orm/libsql';
 import { getRandomCountryName } from "@lib/utils";
+import { generateId } from "lucia";
+import { Argon2id } from "oslo/password"
+import { isValidEmail, lucia } from "@lib/auth";
 
 export interface Env {
     // The environment variable containing your the URL for your Turso database.
@@ -48,6 +51,53 @@ function buildRouter(env: Env): RouterType {
     router.get("/countries", async () => {
         const rs = await db.select().from(countries).execute();
         return Response.json(rs);
+    });
+
+
+    router.post("/sign-up", async (request) => {
+        const formData = request.formData() as FormData;
+        const email = formData.get("email");
+        // check if email is valid
+        if (!email || typeof email !== "string" || !isValidEmail(email)) {
+            return new Response("Invalid email", {
+                status: 400
+            });
+        }
+        // check if password is valid
+        const password = formData.get("password");
+        if (!password || typeof password !== "string" || password.length < 6) {
+            return new Response("Invalid password", {
+                status: 400
+            });
+        }
+    
+        // hash the password
+        const hashedPassword = await new Argon2id().hash(password);
+        const userId = generateId(15);
+
+        try {
+            await db.insert(userTable).values({
+                id: userId,
+                email,
+                hashed_password: hashedPassword
+            });
+    
+            const session = await lucia.createSession(userId, {});
+            const sessionCookie = lucia.createSessionCookie(session.id);
+            return new Response(null, {
+                status: 302,
+                headers: {
+                    Location: "/",
+                    "Set-Cookie": sessionCookie.serialize()
+                }
+            });
+        } catch {
+            // db error, email taken, etc
+            return new Response("Email already used", {
+                status: 400
+            });
+        }
+    
     });
 
     router.get("/add-country", async (request) => {
